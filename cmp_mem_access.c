@@ -25,6 +25,13 @@ static size_t cmp_mem_writer(struct cmp_ctx_s *ctx, const void *data, size_t len
     }
 }
 
+static bool cmp_mem_skipper(struct cmp_ctx_s *ctx, size_t count)
+{
+    cmp_mem_access_t *mem = (cmp_mem_access_t*)ctx->buf;
+    mem->index = count;
+    return true;
+}
+
 static size_t cmp_mem_writer_ro(struct cmp_ctx_s *ctx, const void *data, size_t len)
 {
     (void)ctx;
@@ -38,7 +45,7 @@ void cmp_mem_access_init(cmp_ctx_t *cmp, cmp_mem_access_t *m, void *buf, size_t 
     m->buf = (char*)buf;
     m->size = size;
     m->index = 0;
-    cmp_init(cmp, m, cmp_mem_reader, cmp_mem_writer);
+    cmp_init(cmp, m, cmp_mem_reader, cmp_mem_skipper ,cmp_mem_writer);
 }
 
 void cmp_mem_access_ro_init(cmp_ctx_t *cmp, cmp_mem_access_t *m, const void *buf, size_t size)
@@ -46,7 +53,7 @@ void cmp_mem_access_ro_init(cmp_ctx_t *cmp, cmp_mem_access_t *m, const void *buf
     m->buf = (char*)buf;
     m->size = size;
     m->index = 0;
-    cmp_init(cmp, m, cmp_mem_reader, cmp_mem_writer_ro);
+    cmp_init(cmp, m, cmp_mem_reader, cmp_mem_skipper, cmp_mem_writer_ro);
 }
 
 size_t cmp_mem_access_get_pos(cmp_mem_access_t *m)
